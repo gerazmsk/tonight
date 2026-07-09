@@ -40,11 +40,18 @@ export function TonightPage() {
 
     setSession((sessions?.[0] as TonightSession | undefined) ?? null)
 
-    const city = profile?.city ?? null
-    const { data: venueData } = await supabase.rpc('get_active_venues', { p_city: city })
+    // Visibility-based venue discovery — use radius, not strict city match
+    const rpcParams = {
+      p_city: null as string | null,
+      p_lat: userLocation?.lat ?? null,
+      p_lng: userLocation?.lng ?? null,
+      p_radius_km: userLocation ? 80 : null,
+    }
+
+    const { data: venueData } = await supabase.rpc('get_active_venues', rpcParams)
     setVenues((venueData as VenueSummary[] | null) ?? [])
 
-    const { data: mapData } = await supabase.rpc('get_map_venues', { p_city: city })
+    const { data: mapData } = await supabase.rpc('get_map_venues', rpcParams)
     setMapVenues(
       ((mapData as MapVenue[] | null) ?? []).map((v) => ({
         ...v,
@@ -60,7 +67,7 @@ export function TonightPage() {
     loadData()
     const interval = setInterval(loadData, 60000)
     return () => clearInterval(interval)
-  }, [user, profile?.city])
+  }, [user, userLocation])
 
   useEffect(() => {
     if (!navigator.geolocation) return
