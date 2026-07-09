@@ -68,7 +68,7 @@ export function TonightSetupModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/75 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center">
+    <div className="fixed inset-0 z-[200] flex items-end justify-center bg-black/75 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center">
       <div className="flex max-h-[min(90vh,640px)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-tonight-border bg-tonight-card">
         <div className="flex items-center justify-between border-b border-tonight-border px-5 py-4">
           <div>

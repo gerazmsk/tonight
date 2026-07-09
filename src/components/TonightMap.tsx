@@ -40,7 +40,7 @@ export function TonightMap({ venues, userLocation, onSelectVenue }: TonightMapPr
       : [25.7617, -80.1918]
 
   return (
-    <div className="tonight-map-wrap relative h-[min(52vh,420px)] w-full overflow-hidden rounded-2xl border border-tonight-border">
+    <div className="tonight-map-wrap relative z-0 isolate h-[min(52vh,420px)] w-full overflow-hidden rounded-2xl border border-tonight-border">
       <MapContainer
         center={center}
         zoom={13}
@@ -118,7 +118,7 @@ export function VenueMapSheet({ venue, userLocation, onClose }: VenueMapSheetPro
       : null
 
   return (
-    <div className="fixed inset-x-0 bottom-[var(--nav-total-height)] z-40 px-4 pb-3">
+    <div className="fixed inset-x-0 bottom-[var(--nav-total-height)] z-[150] px-4 pb-3">
       <div className="mx-auto max-w-lg rounded-2xl border border-tonight-border bg-tonight-card p-4 shadow-2xl">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">

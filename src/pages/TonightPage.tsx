@@ -231,7 +231,7 @@ export function TonightPage() {
         </div>
       )}
 
-      {viewMode === 'map' ? (
+      {viewMode === 'map' && !showSetup ? (
         <section className="mt-5">
           <p className="mb-2 text-xs text-tonight-muted">
             Venues with active users · tap a marker to view profiles
@@ -242,7 +242,7 @@ export function TonightPage() {
             onSelectVenue={setSelectedMapVenue}
           />
         </section>
-      ) : (
+      ) : viewMode === 'list' ? (
         <section className="mt-6">
           <h2 className="mb-3 text-sm font-medium text-tonight-muted uppercase tracking-wide">
             Venues nearby
@@ -272,7 +272,7 @@ export function TonightPage() {
             </div>
           )}
         </section>
-      )}
+      ) : null}
 
       <TonightSetupModal
         open={showSetup}

@@ -62,10 +62,29 @@ button {
   min-height: 100dvh;
 }
 
-/* Leaflet dark map */
+/* Leaflet dark map — contain panes so they never overlay app modals */
+.tonight-map-wrap {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  overflow: hidden;
+}
+
 .tonight-map-wrap .leaflet-container {
   background: #0a0a0f;
   font-family: var(--font-sans);
+  z-index: 0 !important;
+}
+
+.tonight-map-wrap .leaflet-pane,
+.tonight-map-wrap .leaflet-top,
+.tonight-map-wrap .leaflet-bottom,
+.tonight-map-wrap .leaflet-control {
+  z-index: 1 !important;
+}
+
+.tonight-map-wrap .leaflet-popup-pane {
+  z-index: 2 !important;
 }
 
 .tonight-marker {
