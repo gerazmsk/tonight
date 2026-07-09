@@ -3,7 +3,7 @@ import { BottomNav } from './BottomNav'
 
 export function AppLayout() {
   return (
-    <div className="min-h-screen bg-tonight-bg pb-20">
+    <div className="page-with-nav min-h-screen bg-tonight-bg">
       <Outlet />
       <BottomNav />
     </div>

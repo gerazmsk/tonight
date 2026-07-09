@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { UserCard } from '../components/UserCard'
+import { Button } from '../components/Button'
 import type { DiscoverProfile } from '../types'
 
 export function DiscoverPage() {
@@ -53,7 +54,7 @@ export function DiscoverPage() {
       <div className="px-5 py-12 text-center">
         <h1 className="text-xl font-semibold">Discover</h1>
         <p className="mt-4 text-tonight-muted">No more profiles right now. Check back later!</p>
-        <button onClick={loadProfiles} className="mt-6 text-tonight-accent">Refresh</button>
+        <Button className="mt-6" onClick={loadProfiles}>Refresh</Button>
       </div>
     )
   }

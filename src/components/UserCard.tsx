@@ -1,5 +1,6 @@
 import { BadgeCheck } from 'lucide-react'
 import { calculateAge } from '../lib/utils'
+import { Button } from './Button'
 import type { DiscoverProfile } from '../types'
 
 interface UserCardProps {
@@ -39,22 +40,16 @@ export function UserCard({ profile, onLike, onPass, onView, compact }: UserCardP
         <p className="px-4 py-3 text-sm text-tonight-muted line-clamp-2">{profile.bio}</p>
       )}
       {(onLike || onPass) && (
-        <div className="flex gap-3 p-4 pt-0">
+        <div className="flex gap-3 p-4 pt-2">
           {onPass && (
-            <button
-              onClick={onPass}
-              className="flex-1 rounded-xl border border-tonight-border py-3 text-sm font-medium hover:bg-tonight-border/50 transition-colors"
-            >
+            <Button variant="secondary" className="flex-1" onClick={onPass}>
               Pass
-            </button>
+            </Button>
           )}
           {onLike && (
-            <button
-              onClick={onLike}
-              className="flex-1 rounded-xl bg-tonight-accent py-3 text-sm font-medium hover:bg-tonight-accent-hover transition-colors"
-            >
+            <Button className="flex-1" onClick={onLike}>
               Like
-            </button>
+            </Button>
           )}
         </div>
       )}

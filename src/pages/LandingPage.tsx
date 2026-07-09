@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Moon, Shield, MapPinOff, Heart } from 'lucide-react'
+import { Button } from '../components/Button'
 
 export function LandingPage() {
   return (
@@ -20,11 +21,8 @@ export function LandingPage() {
           <p className="mt-4 text-tonight-muted leading-relaxed">
             A dating app built for real life. Browse, match, and discover people going out near you — with privacy-first live visibility.
           </p>
-          <Link
-            to="/signup"
-            className="mt-8 inline-block w-full rounded-2xl bg-tonight-accent py-4 text-center font-semibold hover:bg-tonight-accent-hover transition-colors"
-          >
-            Join Tonight
+          <Link to="/signup" className="mt-8 block">
+            <Button fullWidth className="!text-base">Join Tonight</Button>
           </Link>
         </section>
 
