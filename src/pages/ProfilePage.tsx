@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom'
 import { ChevronRight, LogOut, Shield, Eye, UserX } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { PhotoGallery } from '../components/PhotoGallery'
 import { calculateAge, VISIBILITY_LABELS } from '../lib/utils'
-import type { VisibilityMode } from '../types'
+import type { ProfilePhoto, VisibilityMode } from '../types'
 
 export function ProfilePage() {
-  const { profile, signOut, refreshProfile, isAdmin } = useAuth()
-  const [photos, setPhotos] = useState<{ id: string; photo_url: string }[]>([])
+  const { profile, signOut, refreshProfile } = useAuth()
+  const [photos, setPhotos] = useState<ProfilePhoto[]>([])
   const [editing, setEditing] = useState(false)
   const [bio, setBio] = useState(profile?.bio ?? '')
   const [city, setCity] = useState(profile?.city ?? '')
@@ -16,18 +17,22 @@ export function ProfilePage() {
     profile?.visibility_mode ?? 'likes_only'
   )
 
+  const loadPhotos = async () => {
+    if (!profile) return
+    const { data } = await supabase
+      .from('profile_photos')
+      .select('*')
+      .eq('user_id', profile.id)
+      .order('sort_order')
+    setPhotos((data as ProfilePhoto[]) ?? [])
+  }
+
   useEffect(() => {
     if (!profile) return
     setBio(profile.bio ?? '')
     setCity(profile.city ?? '')
     setVisibilityMode(profile.visibility_mode)
-
-    supabase
-      .from('profile_photos')
-      .select('id, photo_url')
-      .eq('user_id', profile.id)
-      .order('sort_order')
-      .then(({ data }) => setPhotos(data ?? []))
+    loadPhotos()
   }, [profile])
 
   const saveProfile = async () => {
@@ -42,19 +47,32 @@ export function ProfilePage() {
   }
 
   const age = calculateAge(profile?.date_of_birth ?? null)
-  const primaryPhoto = photos[0]?.photo_url
 
   return (
     <div className="px-4 py-5">
-      <h1 className="mb-6 text-xl font-semibold">Profile</h1>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Profile</h1>
+        {!editing && (
+          <button
+            onClick={() => setEditing(true)}
+            className="text-sm text-tonight-accent font-medium"
+          >
+            Edit
+          </button>
+        )}
+      </div>
 
-      <div className="flex flex-col items-center text-center">
-        <div className="h-28 w-28 overflow-hidden rounded-full bg-tonight-border">
-          {primaryPhoto ? (
-            <img src={primaryPhoto} alt="" className="h-full w-full object-cover" />
-          ) : null}
-        </div>
-        <h2 className="mt-3 text-xl font-semibold">
+      {profile && (
+        <PhotoGallery
+          userId={profile.id}
+          photos={photos}
+          editing={editing}
+          onPhotosChange={setPhotos}
+        />
+      )}
+
+      <div className="mt-5 text-center">
+        <h2 className="text-xl font-semibold">
           {profile?.full_name}{age ? `, ${age}` : ''}
         </h2>
         {profile?.city && <p className="text-sm text-tonight-muted">{profile.city}</p>}
@@ -87,7 +105,18 @@ export function ProfilePage() {
             </select>
           )}
           <div className="flex gap-2">
-            <button onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-tonight-border py-2.5">
+            <button
+              onClick={() => {
+                setEditing(false)
+                if (profile) {
+                  setBio(profile.bio ?? '')
+                  setCity(profile.city ?? '')
+                  setVisibilityMode(profile.visibility_mode)
+                  loadPhotos()
+                }
+              }}
+              className="flex-1 rounded-xl border border-tonight-border py-2.5"
+            >
               Cancel
             </button>
             <button onClick={saveProfile} className="flex-1 rounded-xl bg-tonight-accent py-2.5 font-medium">
@@ -97,7 +126,7 @@ export function ProfilePage() {
         </div>
       ) : (
         profile?.bio && (
-          <p className="mt-4 text-center text-sm text-tonight-muted">{profile.bio}</p>
+          <p className="mt-4 text-center text-sm text-tonight-muted leading-relaxed">{profile.bio}</p>
         )
       )}
 
@@ -112,9 +141,6 @@ export function ProfilePage() {
           />
         )}
         <MenuItem icon={<Shield size={18} />} label="Safety & Privacy" to="/profile" />
-        {isAdmin && (
-          <MenuItem icon={<Shield size={18} />} label="Admin Dashboard" to="/admin" />
-        )}
         <MenuItem icon={<LogOut size={18} />} label="Log Out" onClick={signOut} danger />
       </div>
     </div>

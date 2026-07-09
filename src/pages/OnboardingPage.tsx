@@ -108,7 +108,7 @@ export function OnboardingPage() {
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
-    const remaining = 6 - photos.length
+    const remaining = 5 - photos.length
     const toAdd = files.slice(0, remaining).map((file) => ({
       file,
       preview: URL.createObjectURL(file),
@@ -168,14 +168,14 @@ export function OnboardingPage() {
         {step === 2 && (
           <div>
             <h1 className="mb-2 text-2xl font-bold">Add photos</h1>
-            <p className="mb-4 text-sm text-tonight-muted">At least 1, up to 6 photos</p>
+            <p className="mb-4 text-sm text-tonight-muted">At least 1, up to 5 photos</p>
             <div className="grid grid-cols-3 gap-2">
               {photos.map((p, i) => (
                 <div key={i} className="aspect-square overflow-hidden rounded-xl bg-tonight-card">
                   <img src={p.preview} alt="" className="h-full w-full object-cover" />
                 </div>
               ))}
-              {photos.length < 6 && (
+              {photos.length < 5 && (
                 <label className="flex aspect-square cursor-pointer items-center justify-center rounded-xl border border-dashed border-tonight-border text-tonight-muted hover:border-tonight-accent">
                   +
                   <input type="file" accept="image/*" className="hidden" onChange={handlePhotoSelect} />

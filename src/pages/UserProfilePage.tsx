@@ -94,11 +94,21 @@ export function UserProfilePage() {
           <p className="text-tonight-muted leading-relaxed">{profile.bio}</p>
         )}
 
-        {photos.length > 1 && (
-          <div className="mt-5 grid grid-cols-3 gap-2">
-            {photos.slice(1).map((p) => (
-              <img key={p.id} src={p.photo_url} alt="" className="aspect-square rounded-xl object-cover" />
-            ))}
+        {photos.length > 0 && (
+          <div className="mt-5">
+            <p className="mb-2 text-sm font-medium text-tonight-muted">Photos</p>
+            <div className="grid grid-cols-3 gap-2">
+              {photos.slice(0, 5).map((p, i) => (
+                <img
+                  key={p.id}
+                  src={p.photo_url}
+                  alt=""
+                  className={`rounded-xl object-cover ${
+                    i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-square'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         )}
 
