@@ -8,7 +8,7 @@ import { OnboardingPage } from './pages/OnboardingPage'
 import { DiscoverPage } from './pages/DiscoverPage'
 import { TonightPage } from './pages/TonightPage'
 import { VenueDetailPage } from './pages/VenueDetailPage'
-import { MatchesPage } from './pages/MatchesPage'
+import { ConnectionsPage } from './pages/ConnectionsPage'
 import { ChatPage } from './pages/ChatPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { UserProfilePage } from './pages/UserProfilePage'
@@ -29,7 +29,8 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/discover" element={<DiscoverPage />} />
           <Route path="/tonight" element={<TonightPage />} />
-          <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/connections" element={<ConnectionsPage />} />
+          <Route path="/matches" element={<Navigate to="/connections?tab=matches" replace />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
         <Route path="/venue/:id" element={<VenueDetailPage />} />

@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { UserCard } from '../components/UserCard'
+import { likeUser } from '../lib/relationships'
 import type { VenueProfile } from '../types'
 
 export function VenueDetailPage() {
@@ -31,13 +32,21 @@ export function VenueDetailPage() {
 
   const handleLike = async (profile: VenueProfile) => {
     if (!user) return
-    await supabase.from('likes').insert({ liker_id: user.id, liked_id: profile.user_id ?? profile.id })
-    navigate(`/user/${profile.user_id ?? profile.id}`)
+    const targetId = profile.user_id ?? profile.id
+    const { matched, matchId } = await likeUser(user.id, targetId)
+    if (matched && matchId) {
+      navigate(`/chat/${matchId}`)
+    } else {
+      navigate(`/user/${targetId}`)
+    }
   }
 
   return (
     <div className="min-h-screen bg-tonight-bg px-4 py-5 pb-24">
-      <button onClick={() => navigate(-1)} className="mb-4 flex items-center gap-2 text-tonight-muted hover:text-white">
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-4 flex min-h-[44px] items-center gap-2 text-tonight-muted hover:text-white"
+      >
         <ArrowLeft size={18} /> Back
       </button>
 

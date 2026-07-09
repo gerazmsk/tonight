@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { UserCard } from '../components/UserCard'
 import { Button } from '../components/Button'
+import { likeUser } from '../lib/relationships'
 import type { DiscoverProfile } from '../types'
 
 export function DiscoverPage() {
@@ -31,8 +32,12 @@ export function DiscoverPage() {
 
   const handleLike = async () => {
     if (!user || !current) return
-    await supabase.from('likes').insert({ liker_id: user.id, liked_id: current.id })
-    setIndex((i) => i + 1)
+    const { matched, matchId } = await likeUser(user.id, current.id)
+    if (matched && matchId) {
+      navigate(`/chat/${matchId}`)
+    } else {
+      setIndex((i) => i + 1)
+    }
   }
 
   const handlePass = async () => {

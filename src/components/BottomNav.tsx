@@ -1,10 +1,10 @@
 import { NavLink } from 'react-router-dom'
-import { Compass, Moon, MessageCircle, User } from 'lucide-react'
+import { Compass, Moon, Heart, User } from 'lucide-react'
 
 const links = [
   { to: '/discover', icon: Compass, label: 'Discover' },
   { to: '/tonight', icon: Moon, label: 'Tonight' },
-  { to: '/matches', icon: MessageCircle, label: 'Matches' },
+  { to: '/connections', icon: Heart, label: 'Connections' },
   { to: '/profile', icon: User, label: 'Profile' },
 ]
 
@@ -15,7 +15,7 @@ export function BottomNav() {
       style={{ paddingBottom: 'var(--nav-safe-bottom)' }}
     >
       <div
-        className="mx-auto flex max-w-lg items-stretch justify-around px-2"
+        className="mx-auto flex max-w-lg items-stretch justify-around px-1"
         style={{ minHeight: 'var(--nav-bar-height)' }}
       >
         {links.map(({ to, icon: Icon, label }) => (
@@ -24,17 +24,17 @@ export function BottomNav() {
             to={to}
             className={({ isActive }) =>
               [
-                'flex flex-1 flex-col items-center justify-center gap-1',
-                'min-h-[48px] min-w-[64px] px-2 py-2',
-                'text-[11px] font-medium transition-colors touch-manipulation',
+                'flex flex-1 flex-col items-center justify-center gap-0.5',
+                'min-h-[48px] min-w-[56px] px-1 py-2',
+                'text-[10px] font-medium transition-colors touch-manipulation',
                 isActive ? 'text-tonight-accent' : 'text-tonight-muted active:text-white',
               ].join(' ')
             }
           >
             {({ isActive }) => (
               <>
-                <Icon size={24} strokeWidth={isActive ? 2.25 : 1.75} />
-                <span>{label}</span>
+                <Icon size={22} strokeWidth={isActive ? 2.25 : 1.75} />
+                <span className="truncate max-w-full">{label}</span>
               </>
             )}
           </NavLink>
