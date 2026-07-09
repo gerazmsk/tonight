@@ -68,10 +68,18 @@ export interface Venue {
   type: VenueType
   city: string
   address: string | null
+  formatted_address?: string | null
+  state?: string | null
+  country?: string | null
   latitude: number | null
   longitude: number | null
+  place_id?: string | null
+  provider?: string | null
+  venue_type?: string | null
+  is_manual?: boolean
   created_by: string | null
   created_at: string
+  updated_at?: string
 }
 
 export interface TonightSession {

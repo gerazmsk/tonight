@@ -6,7 +6,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { Button } from '../components/Button'
 import { TonightMap, VenueMapSheet } from '../components/TonightMap'
 import { TonightSetupModal, type TonightSetupData } from '../components/TonightSetupModal'
-import { geocodeAddress, type MapVenue } from '../lib/map'
+import { type MapVenue } from '../lib/map'
+import { clearTonightDraft, hasTonightDraft } from '../lib/tonightDraft'
 import { formatTimeRemaining, INTENT_LABELS, roundCoordinate } from '../lib/utils'
 import type { TonightSession, VenueSummary } from '../types'
 
@@ -88,32 +89,11 @@ export function TonightPage() {
     setSubmitting(true)
     setSetupError('')
 
-    const coords = await geocodeAddress(data.venueAddress)
-    if (!coords) {
-      setSetupError('Could not find that address. Try a full street address.')
-      setSubmitting(false)
-      return
-    }
+    const lat = data.selectedVenue.latitude
+    const lng = data.selectedVenue.longitude
 
-    const lat = roundCoordinate(coords.lat)
-    const lng = roundCoordinate(coords.lng)
-
-    const { data: venue, error: venueError } = await supabase
-      .from('venues')
-      .insert({
-        name: data.venueName,
-        type: data.venueType,
-        city: profile?.city ?? 'Miami',
-        address: data.venueAddress,
-        latitude: lat,
-        longitude: lng,
-        created_by: user.id,
-      })
-      .select()
-      .single()
-
-    if (venueError || !venue) {
-      setSetupError(venueError?.message ?? 'Failed to save venue')
+    if (lat == null || lng == null) {
+      setSetupError('Venue location is missing. Please re-select your venue.')
       setSubmitting(false)
       return
     }
@@ -129,7 +109,7 @@ export function TonightPage() {
 
     const { error: sessionError } = await supabase.from('tonight_sessions').insert({
       user_id: user.id,
-      venue_id: venue.id,
+      venue_id: data.venueId,
       intent: data.intent,
       status_message: data.statusMessage || null,
       visibility_mode: data.visibilityMode,
@@ -144,6 +124,7 @@ export function TonightPage() {
       return
     }
 
+    clearTonightDraft(user.id)
     setShowSetup(false)
     setSubmitting(false)
     await loadData()
@@ -200,15 +181,28 @@ export function TonightPage() {
       </div>
 
       {!session ? (
-        <div className="rounded-2xl border border-tonight-border bg-tonight-card p-5 text-center">
-          <h2 className="text-lg font-semibold">Turn on Tonight Mode</h2>
-          <p className="mt-2 text-sm text-tonight-muted leading-relaxed">
-            Let people know you are open to meeting tonight. Your venue appears on the map — never your exact location.
-          </p>
-          <div className="mt-5 px-1">
-            <Button fullWidth onClick={() => setShowSetup(true)}>
-              Turn on Tonight Mode
-            </Button>
+        <div className="space-y-3">
+          {user && hasTonightDraft(user.id) && (
+            <div className="rounded-2xl border border-tonight-accent/30 bg-tonight-accent/10 p-4">
+              <p className="text-sm font-medium">You have a saved Tonight setup</p>
+              <p className="mt-1 text-xs text-tonight-muted">
+                Your venue and preferences were saved locally. Resume where you left off.
+              </p>
+              <Button className="mt-3" fullWidth onClick={() => setShowSetup(true)}>
+                Resume setup
+              </Button>
+            </div>
+          )}
+          <div className="rounded-2xl border border-tonight-border bg-tonight-card p-5 text-center">
+            <h2 className="text-lg font-semibold">Turn on Tonight Mode</h2>
+            <p className="mt-2 text-sm text-tonight-muted leading-relaxed">
+              Let people know you are open to meeting tonight. Your venue appears on the map — never your exact location.
+            </p>
+            <div className="mt-5 px-1">
+              <Button fullWidth onClick={() => setShowSetup(true)}>
+                Turn on Tonight Mode
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
@@ -281,18 +275,25 @@ export function TonightPage() {
         </section>
       ) : null}
 
-      <TonightSetupModal
-        open={showSetup}
-        isFemale={profile?.gender === 'female'}
-        isUpdate={!!session}
-        loading={submitting}
-        error={setupError}
-        onClose={() => {
-          setShowSetup(false)
-          setSetupError('')
-        }}
-        onSubmit={turnOnTonight}
-      />
+      {user && (
+        <TonightSetupModal
+          open={showSetup}
+          userId={user.id}
+          isFemale={profile?.gender === 'female'}
+          isUpdate={!!session}
+          loading={submitting}
+          error={setupError}
+          onClose={() => {
+            setShowSetup(false)
+            setSetupError('')
+          }}
+          onCancel={() => {
+            setShowSetup(false)
+            setSetupError('')
+          }}
+          onSubmit={turnOnTonight}
+        />
+      )}
 
       <VenueMapSheet
         venue={selectedMapVenue}
